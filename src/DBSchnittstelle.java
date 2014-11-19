@@ -8,34 +8,46 @@ public class DBSchnittstelle {
 	private String dbName;
 	private String username;
 	private String password;
+	private String ip;
+	private String port;
 	private Connection conn;
 
 	// Konstruktor
-	public DBSchnittstelle(String username, String password) {
-		host = "jdbc:mysql://127.0.0.1/";
-		dbName = "lager";
-		this.username = "Patrick";
-		this.password = "12345";
+	public DBSchnittstelle(String username, String password, String ip, String port, String dbName) {
+		this.username = username;
+		this.password = password;
+		this.ip = ip;
+		this.port = port;
+		this.dbName = dbName;
 	}
-	
+
 	// Methoden
-	public String connectToDB() {
-		String ergebnis;
+	public void connectToDB() {
 		try {
+			host = "jdbc:mysql://" + ip + ":" + port + "/" + dbName;
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(host, username, password);
-			ergebnis = "Verbindung hergestellt.";
+			System.out.println("Verbindung erfolgreich hergestellt.");
 		} catch (ClassNotFoundException e) {
-			ergebnis = "Klasse nicht gefunden.";
+			System.out.println("Klasse wurde nicht gefunden.");
 		} catch (SQLException e) {
-			ergebnis = "Datenbank wurde nicht gefunden.";
+			//System.out.println(e); // wird nur zu testzwecken genutzt
+			if (String.valueOf(e).contains("Access denied for user") == true) {
+				System.out.println("Benutzername oder Passwort ist falsch.");
+			}
+			
+			if (String.valueOf(e).contains("Communications link failure") == true) {
+				System.out.println("Verbindung konnte nicht hergestellt werden.");
+			}
+
+			if (String.valueOf(e).contains("Unknown database") == true) {
+				System.out.println("Datenbank ist nicht bekannt.");
+			}
 		}
-		return ergebnis;
 	}
-	
-	public void closeConnection() throws SQLException{
-	  conn.close();
-	  
+
+	public void closeConnection() throws SQLException {
+		conn.close();
 	}
 
 }
