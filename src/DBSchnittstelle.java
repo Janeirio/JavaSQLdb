@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import com.mysql.jdbc.Statement;
 
 public class DBSchnittstelle {
 	// Attribute
@@ -11,6 +12,8 @@ public class DBSchnittstelle {
 	private String ip;
 	private String port;
 	private Connection conn;
+	private java.sql.Statement state;
+	private java.sql.ResultSet result;
 
 	// Konstruktor
 	public DBSchnittstelle(String username, String password, String ip, String port, String dbName) {
@@ -31,11 +34,11 @@ public class DBSchnittstelle {
 		} catch (ClassNotFoundException e) {
 			System.out.println("Klasse wurde nicht gefunden.");
 		} catch (SQLException e) {
-			//System.out.println(e); // wird nur zu testzwecken genutzt
+			// System.out.println(e); // wird nur zu testzwecken genutzt
 			if (String.valueOf(e).contains("Access denied for user") == true) {
 				System.out.println("Benutzername oder Passwort ist falsch.");
 			}
-			
+
 			if (String.valueOf(e).contains("Communications link failure") == true) {
 				System.out.println("Verbindung konnte nicht hergestellt werden.");
 			}
@@ -48,6 +51,14 @@ public class DBSchnittstelle {
 
 	public void closeConnection() throws SQLException {
 		conn.close();
+	}
+
+	public void selectQuery() {				//http://alvinalexander.com/java/edu/pj/jdbc/jdbc0003
+		try{
+			state = conn.createStatement();
+		}catch(SQLException e){
+			
+		}
 	}
 
 }
